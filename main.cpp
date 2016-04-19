@@ -11,17 +11,20 @@ using namespace std;
 int main()
 {
 	const int TOTAL_MATCHES = 10, MAX_THROWS_TURN = 3;
-	unsigned int bAccuracy = 0, oBAccuracy = 0, sAccuracy = 0, targetNo = 0;
+	unsigned int bAccuracy = 0, sAccuracy = 0, targetNo = 0;
 	int tempScore = 0, tempCalc = 0;
 	string playerName = "";
 	vector<int> dartboard = { 20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5 };
 	vector<int>::const_iterator bIter;
 	vector<int> doublesLeaveDoubles = { 40, 36, 32, 28, 24, 20, 16, 12, 8, 4 }; 
 	vector<int>::const_iterator dLd;
-	vector<int> scoreCombinations(12); //stores all the possible Joe:Sid set winning combinations: 7:6, 6:7, 5:7, 4:7, 3:7, 2:7, 1:7 and viceversa
+
+	vector<int> scoreCombinations(14); //stores all the possible Joe:Sid set winning combinations: 7:6, 6:7, 5:7, 4:7, 3:7, 2:7, 1:7 and viceversa
+	vector<string> stringCombinations = {"7:0", "7:1", "7:2", "7:3", "7:4", "7:5", "7:6", "6:7", "5:7", "4:7", "3:7", "2:7", "1:7", "0:7"};
 
 	vector<Player> player(2);
 	vector<Player>::iterator modIter;
+
 	for (unsigned int i = 0; i < player.size(); i++) //setting players' names
 	{
 		cout << "Player " << (i + 1) << " name is: ";
@@ -50,13 +53,6 @@ int main()
 					cin >> bAccuracy;
 					modIter->setBullAccuracy(bAccuracy);
 				}
-				cout << "\nSet the players' outer bull accuracy: " << endl;
-				for (modIter = player.begin(); modIter != player.end(); modIter++)
-				{
-					cout << modIter->getName() << ": ";
-					cin >> oBAccuracy;
-					modIter->setOuterAccuracy(oBAccuracy);
-				}
 				cout << "\nSet the players' single hit accuracy: " << endl;
 				for (modIter = player.begin(); modIter != player.end(); modIter++)
 				{
@@ -74,6 +70,11 @@ int main()
 					cin >> bAccuracy;
 					modIter->setAllAccuracy(bAccuracy);
 				}
+				break;
+
+			default:
+				cout << "Invalid option." << endl;
+				exit(1);
 				break;
 			}
 			break;
@@ -304,53 +305,47 @@ int main()
 
 				//counters for the sets winning percentage
 				{
-					if (player[0].setsWon == 7 && player[1].setsWon == 1)
-					{
+					if (player[0].setsWon == 7 && player[1].setsWon == 0){
 						scoreCombinations[0]++;
 					}
-					else if (player[0].setsWon == 7 && player[1].setsWon == 2)
-					{
+					else if (player[0].setsWon == 7 && player[1].setsWon == 1){
 						scoreCombinations[1]++;
 					}
-					else if (player[0].setsWon == 7 && player[1].setsWon == 3)
-					{
+					else if (player[0].setsWon == 7 && player[1].setsWon == 2){
 						scoreCombinations[2]++;
 					}
-					else if (player[0].setsWon == 7 && player[1].setsWon == 4)
-					{
+					else if (player[0].setsWon == 7 && player[1].setsWon == 3){
 						scoreCombinations[3]++;
 					}
-					else if (player[0].setsWon == 7 && player[1].setsWon == 5)
-					{
+					else if (player[0].setsWon == 7 && player[1].setsWon == 4){
 						scoreCombinations[4]++;
 					}
-					else if (player[0].setsWon == 7 && player[1].setsWon == 6)
-					{
+					else if (player[0].setsWon == 7 && player[1].setsWon == 5){
 						scoreCombinations[5]++;
 					}
-					else if (player[0].setsWon == 6 && player[1].setsWon == 7)
-					{
+					else if (player[0].setsWon == 7 && player[1].setsWon == 6){
 						scoreCombinations[6]++;
 					}
-					else if (player[0].setsWon == 5 && player[1].setsWon == 7)
-					{
+					else if (player[0].setsWon == 6 && player[1].setsWon == 7){
 						scoreCombinations[7]++;
 					}
-					else if (player[0].setsWon == 4 && player[1].setsWon == 7)
-					{
+					else if (player[0].setsWon == 5 && player[1].setsWon == 7){
 						scoreCombinations[8]++;
 					}
-					else if (player[0].setsWon == 3 && player[1].setsWon == 7)
-					{
+					else if (player[0].setsWon == 4 && player[1].setsWon == 7){
 						scoreCombinations[9]++;
 					}
-					else if (player[0].setsWon == 2 && player[1].setsWon == 7)
-					{
+					else if (player[0].setsWon == 3 && player[1].setsWon == 7){
 						scoreCombinations[10]++;
 					}
-					else if (player[0].setsWon == 1 && player[1].setsWon == 7)
-					{
+					else if (player[0].setsWon == 2 && player[1].setsWon == 7){
 						scoreCombinations[11]++;
+					}
+					else if (player[0].setsWon == 1 && player[1].setsWon == 7){
+						scoreCombinations[12]++;
+					}
+					else if (player[0].setsWon == 0 && player[1].setsWon == 7){
+						scoreCombinations[13]++;
 					}
 				}
 			}
@@ -368,22 +363,16 @@ int main()
 
 	//results and percentages output
 	cout << "\nSimulation ended. Players' results:" << endl;
-	cout << player[0].getName() << ": " << player[0].matchesWon << " matches won" << endl;
-	cout << player[1].getName() << ": " << player[1].matchesWon << " matches won" << endl;
+
+	for(unsigned int i=0;i<player.size();i++){
+		cout << player[i].getName() << ": " << player[i].matchesWon << " matches won." << endl;
+	}
+
 	cout << "\nJoe:Sid\t\tFrequency" << endl;
-	cout << string(2, ' ') << "7:1\t\t" << string(3, ' ') << setprecision(5) << (((float)scoreCombinations[0]) / TOTAL_MATCHES) * 100 << "%" << endl;
-	cout << string(2, ' ') << "7:2\t\t" << string(3, ' ') << setprecision(5) << (((float)scoreCombinations[1]) / TOTAL_MATCHES) * 100 << "%" << endl;
-	cout << string(2, ' ') << "7:3\t\t" << string(3, ' ') << setprecision(5) << (((float)scoreCombinations[2]) / TOTAL_MATCHES) * 100 << "%" << endl;
-	cout << string(2, ' ') << "7:4\t\t" << string(3, ' ') << setprecision(5) << (((float)scoreCombinations[3]) / TOTAL_MATCHES) * 100 << "%" << endl;
-	cout << string(2, ' ') << "7:5\t\t" << string(3, ' ') << setprecision(5) << (((float)scoreCombinations[4]) / TOTAL_MATCHES) * 100 << "%" << endl;
-	cout << string(2, ' ') << "7:6\t\t" << string(3, ' ') << setprecision(5) << (((float)scoreCombinations[5]) / TOTAL_MATCHES) * 100 << "%" << endl;
-	cout << string(2, ' ') << "6:7\t\t" << string(3, ' ') << setprecision(5) << (((float)scoreCombinations[6]) / TOTAL_MATCHES) * 100 << "%" << endl;
-	cout << string(2, ' ') << "5:7\t\t" << string(3, ' ') << setprecision(5) << (((float)scoreCombinations[7]) / TOTAL_MATCHES) * 100 << "%" << endl;
-	cout << string(2, ' ') << "4:7\t\t" << string(3, ' ') << setprecision(5) << (((float)scoreCombinations[8]) / TOTAL_MATCHES) * 100 << "%" << endl;
-	cout << string(2, ' ') << "3:7\t\t" << string(3, ' ') << setprecision(5) << (((float)scoreCombinations[9]) / TOTAL_MATCHES) * 100 << "%" << endl;
-	cout << string(2, ' ') << "2:7\t\t" << string(3, ' ') << setprecision(5) << (((float)scoreCombinations[10]) / TOTAL_MATCHES) * 100 << "%" << endl;
-	cout << string(2, ' ') << "1:7\t\t" << string(3, ' ') << setprecision(5) << (((float)scoreCombinations[11]) / TOTAL_MATCHES) * 100 << "%" << endl;
-		
+
+	for(unsigned int i=0;i<scoreCombinations.size();i++){
+		cout << string(2, ' ') << stringCombinations[i] << "\t\t" << string(3, ' ') << setprecision(5) << (((float)scoreCombinations[i]) / TOTAL_MATCHES) * 100 << "%" << endl;
+	}
 
 	return 0;
 }

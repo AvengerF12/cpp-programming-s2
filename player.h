@@ -10,7 +10,6 @@ class Player
 private:
 	string playerName;
 	int bullAccuracy;
-	int outerAccuracy;
 	int singleAccuracy;
 	int playerScore;
 
@@ -24,14 +23,12 @@ public:
 	string& getName();
 	int& getScore();
 	int& getBullAccuracy();
-	int& getOuterAccuracy();
 	int& getSingleAccuracy();
 	
 	//setters
 	void setName(string& name);
 	void setScore(int& score);
 	void setBullAccuracy(unsigned int& bull_accuracy);
-	void setOuterAccuracy(unsigned int& outer_accuracy);
 	void setSingleAccuracy(unsigned int& single_accuracy);
 	void setAllAccuracy(unsigned int& all_accuracy);
 
