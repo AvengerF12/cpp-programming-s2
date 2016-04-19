@@ -14,13 +14,14 @@ int main()
 	unsigned int bAccuracy = 0, sAccuracy = 0, targetNo = 0;
 	int tempScore = 0, tempCalc = 0;
 	string playerName = "";
-	vector<int> dartboard = { 20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5 };
+	vector<int> dartboard { 20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5 };
 	vector<int>::const_iterator bIter;
-	vector<int> doublesLeaveDoubles = { 40, 36, 32, 28, 24, 20, 16, 12, 8, 4 }; 
+	vector<int> doublesLeaveDoubles { 40, 36, 32, 28, 24, 20, 16, 12, 8, 4 }; 
 	vector<int>::const_iterator dLd;
 
 	vector<int> scoreCombinations(14); //stores all the possible Joe:Sid set winning combinations: 7:6, 6:7, 5:7, 4:7, 3:7, 2:7, 1:7 and viceversa
-	vector<string> stringCombinations = {"7:0", "7:1", "7:2", "7:3", "7:4", "7:5", "7:6", "6:7", "5:7", "4:7", "3:7", "2:7", "1:7", "0:7"};
+	vector<string> stringCombinations {"7:0", "7:1", "7:2", "7:3", "7:4", "7:5", "7:6", \
+						"6:7", "5:7", "4:7", "3:7", "2:7", "1:7", "0:7"};
 
 	vector<Player> player(2);
 	vector<Player>::iterator modIter;
@@ -34,25 +35,18 @@ int main()
 
 	cout << "Would you prefer to manually set the accuracy values, set a master accuracy, or choose it from a randomization? (1, 2) ";
 	int accChoice = 0;
-	while (true)
-	{
+	while (true) {
 		cin >> accChoice;
-		if (accChoice != 1 && accChoice != 2 && accChoice != 3)
-		{
-			cout << "Wrong number inserted. Please try again: ";
-		}
-		else
-		{
-			switch (accChoice)
-			{
+		
+		switch (accChoice) {
 			case 1:
 				cout << "\nSet the players' bull accuracy:" << endl;
-				for (modIter = player.begin(); modIter != player.end(); modIter++)
-				{
+				for (modIter = player.begin(); modIter != player.end(); modIter++){
 					cout << modIter->getName() << ": ";
 					cin >> bAccuracy;
 					modIter->setBullAccuracy(bAccuracy);
 				}
+
 				cout << "\nSet the players' single hit accuracy: " << endl;
 				for (modIter = player.begin(); modIter != player.end(); modIter++)
 				{
@@ -73,12 +67,14 @@ int main()
 				break;
 
 			default:
-				cout << "Invalid option." << endl;
-				exit(1);
+				cout << "Wrong number inserted. Please try again: ";
 				break;
 			}
+
+		if(accChoice == 1 || accChoice == 2) {
 			break;
 		}
+		
 	}
 	
 	//decision of player that begins game

@@ -7,26 +7,31 @@
 
 using namespace std;
 
+
 // getters
 string& Player::getName()
 {
 	return playerName;
 }
 
+
 int& Player::getScore()
 {
 	return playerScore;
 }
+
 
 int& Player::getBullAccuracy()
 {
 	return bullAccuracy;
 }
 
+
 int& Player::getSingleAccuracy() 
 {
 	return singleAccuracy;
 }
+
 
 // setters
 void Player::setName(string& name)
@@ -34,15 +39,18 @@ void Player::setName(string& name)
 	playerName = name;
 }
 
+
 void Player::setScore(int& score)
 {
 	playerScore = score;
 }
 
+
 void Player::setBullAccuracy(unsigned int& bull_accuracy)
 {
 	bullAccuracy = bull_accuracy;
 }
+
 
 void Player::setSingleAccuracy(unsigned int& single_accuracy)
 {
@@ -79,6 +87,7 @@ void Player::setAllAccuracy(unsigned int & all_accuracy)
 	}
 }
 
+
 //throw functions
 int Player::bull(const vector<int>& theDartboard)
 {
@@ -101,25 +110,22 @@ int Player::bull(const vector<int>& theDartboard)
 	}
 }
 
+
 int Player::singleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int& target)
 {
 	int randomization = (rand() % 100);
 
-	if (target == 25)
-	{
-		if (randomization <= getSingleAccuracy() + 4)
-		{
+	if (target == 25){
+		if (randomization <= getSingleAccuracy() + 4){
 			return 25;
-		}
-		else
-		{
+		} else {
 			int half = (100 - getSingleAccuracy()) / 2; //for remaining hit cases
-			if (randomization > getSingleAccuracy() && randomization <= (getSingleAccuracy() + half)) //remainder accuracy % split and considered as an one interval
-			{	//for hitting the bull
+			if (randomization > getSingleAccuracy() && randomization <= (getSingleAccuracy() + half)){ 
+			//remainder accuracy % split and considered as an one interval
+				//for hitting the bull
 				return 50;
-			}
-			else //and the other interval for the rest of board numbers
-			{
+			} else { 
+				//and the other interval for the rest of board numbers
 				int dartPosRand = (rand() % theDartboard.size());
 				return theDartboard[dartPosRand];
 			}
@@ -144,16 +150,12 @@ int Player::singleThrow(const vector<int>& theDartboard, vector<int>::const_iter
 				bIter--; //makes sure to hit the dartboard number left of chosen one
 			}
 			return *bIter;
-		}
-		else if (randomization > (getSingleAccuracy() + aFourth) && randomization <= (getSingleAccuracy() + 2 * aFourth)) //second alternative interval
+		} else if (randomization > (getSingleAccuracy() + aFourth) && randomization <= (getSingleAccuracy() + 2 * aFourth)) //second alternative interval
 		{
 			bIter = find(theDartboard.begin(), theDartboard.end(), target);
-			if (bIter == (theDartboard.end() - 1))
-			{
+			if (bIter == (theDartboard.end() - 1)){
 				bIter = theDartboard.begin(); //exception if the chosen number is the last of the vector
-			}
-			else
-			{
+			} else {
 				bIter++; //makes sure to hit the dartboard number right of chosen one
 			}
 			return *bIter;
@@ -162,8 +164,7 @@ int Player::singleThrow(const vector<int>& theDartboard, vector<int>::const_iter
 		{
 			return target * 2; //hits the double of the intended number
 		}
-		else
-		{
+		else {
 			return target * 3; //hits the treble of the intended number
 		}
 	}
@@ -210,6 +211,7 @@ int Player::doubleThrow(const vector<int>& theDartboard, vector<int>::const_iter
 	}
 }
 
+
 int Player::trebleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int & target)
 {
 	int randomization = (rand() % 100);
@@ -218,12 +220,11 @@ int Player::trebleThrow(const vector<int>& theDartboard, vector<int>::const_iter
 	if (randomization <= getSingleAccuracy()) //check later if maybe some other accuracy coefficient
 	{
 		return target * 3; //hits correct treble
-	}
-	else if (randomization > getSingleAccuracy() && randomization <= (getSingleAccuracy() + 2 * aFourth)) //first alternative interval, bigger than usual
+	} else if (randomization > getSingleAccuracy() && randomization <= (getSingleAccuracy() + 2 * aFourth)) //first alternative interval, bigger than usual
 	{																									  //because double occasion to hit single
 		return target; //hits single
-	}
-	else if (randomization > (getSingleAccuracy() + 2 * aFourth) && randomization <= (getSingleAccuracy() + 3 * aFourth)) //second alternative interval
+	} else if (randomization > (getSingleAccuracy() + 2 * aFourth) \
+		&& randomization <= (getSingleAccuracy() + 3 * aFourth)) //second alternative interval
 	{
 		bIter = find(theDartboard.begin(), theDartboard.end(), target);
 		if (bIter == theDartboard.begin())
