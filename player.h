@@ -27,16 +27,16 @@ public:
 	
 	//setters
 	void setName(string& name);
-	void setScore(int& score);
-	void setBullAccuracy(unsigned int& bull_accuracy);
-	void setSingleAccuracy(unsigned int& single_accuracy);
-	void setAllAccuracy(unsigned int& all_accuracy);
+	void setScore(int score);
+	void setBullAccuracy(unsigned int bull_accuracy);
+	void setSingleAccuracy(unsigned int single_accuracy);
+	void setAllAccuracy(unsigned int all_accuracy);
 
 	//throw functions
 	int bull(const vector<int>& theDartboard);
-	int singleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int& target);
-	int doubleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int& target);
-	int trebleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int& target);
+	int singleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int target);
+	int doubleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int target);
+	int trebleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int target);
 
 	Player();
 	~Player();

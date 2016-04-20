@@ -42,25 +42,25 @@ void Player::setName(string& name)
 }
 
 
-void Player::setScore(int& score)
+void Player::setScore(int score)
 {
 	playerScore = score;
 }
 
 
-void Player::setBullAccuracy(unsigned int& bull_accuracy)
+void Player::setBullAccuracy(unsigned int bull_accuracy)
 {
 	bullAccuracy = bull_accuracy;;
 }
 
 
-void Player::setSingleAccuracy(unsigned int& single_accuracy)
+void Player::setSingleAccuracy(unsigned int single_accuracy)
 {
 	singleAccuracy = single_accuracy;
 }
 
 
-void Player::setAllAccuracy(unsigned int & all_accuracy)
+void Player::setAllAccuracy(unsigned int all_accuracy)
 {
 	if (all_accuracy <= 99 && all_accuracy > 89)
 	{
@@ -110,7 +110,7 @@ int Player::bull(const vector<int>& theDartboard)
 }
 
 
-int Player::singleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int& target)
+int Player::singleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int target)
 {
 	int randomization = (rand() % 100);
 
@@ -161,7 +161,7 @@ int Player::singleThrow(const vector<int>& theDartboard, vector<int>::const_iter
 	}
 }
 
-int Player::doubleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int & target)
+int Player::doubleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int target)
 {
 	int randomization = (rand() % 100);
 	int aThird = (100 - getSingleAccuracy()) / 3; //for remaining hit cases
@@ -189,7 +189,7 @@ int Player::doubleThrow(const vector<int>& theDartboard, vector<int>::const_iter
 }
 
 
-int Player::trebleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int & target)
+int Player::trebleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int target)
 {
 	int randomization = (rand() % 100);
 	int aFourth = (100 - getSingleAccuracy()) / 4; //for remaining hit cases
