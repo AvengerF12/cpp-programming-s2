@@ -8,11 +8,13 @@
 #include "player.h"
 using namespace std;
 
+int take_decision(Player& current, vector<int> doublesLeaveDoubles, vector<int> dartboard);
+
 int main()
 {
 	const int TOTAL_MATCHES = 10, MAX_THROWS_TURN = 3;
 	unsigned int bAccuracy = 0, sAccuracy = 0, targetNo = 0;
-	int tempScore = 0, tempCalc = 0;
+	int tempScore = 0;
 	string playerName = "";
 	vector<int> dartboard { 20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5 };
 	vector<int>::const_iterator bIter;
@@ -48,8 +50,7 @@ int main()
 				}
 
 				cout << "\nSet the players' single hit accuracy: " << endl;
-				for (modIter = player.begin(); modIter != player.end(); modIter++)
-				{
+				for (modIter = player.begin(); modIter != player.end(); modIter++) {
 					cout << modIter->getName() << ": ";
 					cin >> sAccuracy;
 					modIter->setSingleAccuracy(sAccuracy);
@@ -58,8 +59,7 @@ int main()
 
 			case 2:
 				cout << "\nSet the players' master accuracy" << endl;
-				for (modIter = player.begin(); modIter != player.end(); modIter++)
-				{
+				for (modIter = player.begin(); modIter != player.end(); modIter++) {
 					cout << modIter->getName() << ": ";
 					cin >> bAccuracy;
 					modIter->setAllAccuracy(bAccuracy);
@@ -110,11 +110,12 @@ int main()
 		cin >> simYN;
 		if (simYN == 'y' || simYN == 'Y')
 		{
+
 			for (int i = 0; i < TOTAL_MATCHES; i++)
 			{
 				player[0].setsWon = 0;
 				player[1].setsWon = 0;
-				while (player[0].setsWon < 7 && player[1].setsWon < 7) //when any player reaches 7 sets won in one match (can't lose the match anymore), the loop breaks
+				while (player[0].setsWon < 7 && player[1].setsWon < 7) // When any player reaches 7 sets won in one match (can't lose the match anymore), the loop breaks
 				{
 					player[0].gamesWon = 0;
 					player[1].gamesWon = 0;
@@ -131,120 +132,8 @@ int main()
 							tempScore = modIter->getScore(); //saves current score in case any of the 3 shots is invalid
 							while (modIter->getScore() >= 2 && modIter->nTurns != 0)
 							{
-								//start of AI action
-								for (bIter = dartboard.begin(); bIter != dartboard.end(); bIter++)
-								{
-									for (dLd = doublesLeaveDoubles.begin(); dLd != doublesLeaveDoubles.end(); dLd++) //if score is equal to a double-leaving-double, goes for THAT first
-									{
-										if (modIter->getScore() == (*dLd))
-										{
-											targetNo = (*dLd) / 2;
-											tempCalc = (modIter->getScore() - modIter->doubleThrow(dartboard, bIter, targetNo));
-											modIter->setScore(tempCalc);
-											cout << "Double throw attempted on double leaving double to end" << endl;
-											goto skipifs;
-										}
-									}
-
-									if (modIter->getScore() == ((*bIter) * 2)) //if not then check if score is equal to ANY of the doubles, go for THAT shot to end the game
-									{
-										targetNo = *bIter;
-										tempCalc = (modIter->getScore() - modIter->doubleThrow(dartboard, bIter, targetNo));
-										modIter->setScore(tempCalc);
-										cout << "Normal double throw attempted to end" << endl;
-										goto skipifs;
-									}
-								}
-								if (modIter->getScore() == 50) //if able to win with a bull, go for that shot
-								{
-									tempCalc = (modIter->getScore() - modIter->bull(dartboard));
-									modIter->setScore(tempCalc);
-									cout << "Bull attempted" << endl;
-								}
-								if (modIter->getScore() > 50)
-								{
-									for (bIter = dartboard.begin(); bIter != dartboard.end(); bIter++) 
-									{
-										for (dLd = doublesLeaveDoubles.begin(); dLd != doublesLeaveDoubles.end(); dLd++) //checks if there's any double of treble possible that will leave
-										{																				 //a double-leaving-double (most efficient even in case of fail) to end
-											if (modIter->getScore() == (((*bIter) * 3) + (*dLd)))
-											{
-												targetNo = *bIter;
-												tempCalc = (modIter->getScore() - modIter->trebleThrow(dartboard, bIter, targetNo));
-												modIter->setScore(tempCalc);
-												cout << "Triple throw attempted to leave double leaving double" << endl;
-												goto skipifs;
-											}
-											else if (modIter->getScore() == (((*bIter) * 2) + (*dLd)))
-											{
-												targetNo = *bIter;
-												tempCalc = (modIter->getScore() - modIter->doubleThrow(dartboard, bIter, targetNo));
-												modIter->setScore(tempCalc);
-												cout << "Double throw attempted to leave double leaving double" << endl;
-												goto skipifs;
-											}
-										}
-
-										if (modIter->getScore() == (((*bIter) * 3) + 50)) //checks then if there's any double or treble possible that will leave
-										{												  //a bull to win the game, and goes for that (for question 2, 3 & 4 in adv AI)
-											targetNo = *bIter;
-											tempCalc = (modIter->getScore() - modIter->trebleThrow(dartboard, bIter, targetNo));
-											modIter->setScore(tempCalc);
-											cout << "Triple throw attempted to leave a bull" << endl;
-											goto skipifs;
-										}
-										else if (modIter->getScore() == (((*bIter) * 2) + 50))
-										{
-											targetNo = *bIter;
-											tempCalc = (modIter->getScore() - modIter->doubleThrow(dartboard, bIter, targetNo));
-											modIter->setScore(tempCalc);
-											cout << "Double throw attempted to leave a bull" << endl;
-											goto skipifs;
-										}
-									}
-								}
-								if (modIter->getScore() >= 62) //in all the other cases, until down to this score, go only for the highest treble (3x20 - 60)
-								{
-									targetNo = 20; //additional step; because of reference, function argument needs to be a variable, not just literal "20"
-									tempCalc = (modIter->getScore() - modIter->trebleThrow(dartboard, bIter, targetNo));
-									modIter->setScore(tempCalc);
-									cout << "Normal triple throw attempted" << endl;
-								}
-								else if (modIter->getScore() < 62 && modIter->getScore() > 50) //goes for the single throw equal to the score difference, 
-								{															   //thus it can try to end with a bull at next throw
-									targetNo = modIter->getScore() - 50;
-									tempCalc = (modIter->getScore() - modIter->singleThrow(dartboard, bIter, targetNo));
-									modIter->setScore(tempCalc);
-									cout << "Attempted throw difference (62 - 50) from bull" << endl;
-								}
-								else if (modIter->getScore() < 50)
-								{
-									for (dLd = doublesLeaveDoubles.begin(); dLd != doublesLeaveDoubles.end(); dLd++) //whenever under 50, whatever number of throws left, always better to get close
-									{																				 //to a double that leaves a double (in case of failure), and go for that one
-										for (int j = 1; j <= 9; j++)
-										{
-											if (modIter->getScore() == ((*dLd) + j)) //calculates score difference from every double and aims for 
-											{										 //that difference in order to have afterwards a score equal to a double
-												targetNo = j;
-												tempCalc = (modIter->getScore() - modIter->singleThrow(dartboard, bIter, targetNo));
-												modIter->setScore(tempCalc);
-												cout << "Attempted difference (1-9) to leave double leaving double" << endl;
-												dLd = doublesLeaveDoubles.end() - 1; //in order to end outer loop immediately
-												break;
-											}
-										}
-									}
-									if (modIter->getScore() == 3) //when score is under 4, no more doubles leaving doubles, must only end with double 1
-									{
-										targetNo = 1;
-										tempCalc = (modIter->getScore() - modIter->singleThrow(dartboard, bIter, targetNo));
-										modIter->setScore(tempCalc);
-										cout << "Attempted throwing 1 because score under 4" << endl;
-									}
-								}
+								targetNo = take_decision(*modIter, doublesLeaveDoubles, dartboard);	
 															
-							skipifs: //only usage of goto redirection - highly needed to exit the tricky previous loop checks
-
 								cout << modIter->getName() << "'s just scored " << targetNo << endl;
 								cout << modIter->getName() << "'s score is: " << modIter->getScore() << endl;
 								cout << modIter->getName() << "'s throws left: " << (modIter->nTurns) - 1 << endl;
@@ -298,6 +187,7 @@ int main()
 				{
 					player[1].matchesWon++;
 				}
+
 
 				//counters for the sets winning percentage
 				{
@@ -368,6 +258,146 @@ int main()
 
 	for(unsigned int i=0;i<scoreCombinations.size();i++){
 		cout << string(2, ' ') << stringCombinations[i] << "\t\t" << string(3, ' ') << setprecision(5) << (((float)scoreCombinations[i]) / TOTAL_MATCHES) * 100 << "%" << endl;
+	}
+
+	return 0;
+}
+
+
+
+
+
+
+
+
+int take_decision(Player& current, vector<int> doublesLeaveDoubles, vector<int> dartboard)
+{
+	vector<int>::const_iterator dLd;
+	vector<int>::const_iterator bIter;
+
+	int tempCalc = 0;
+	unsigned int targetNo = 0;
+
+	//start of AI action
+	for (dLd = doublesLeaveDoubles.begin(); dLd != doublesLeaveDoubles.end(); dLd++) //if score is equal to a double-leaving-double, goes for THAT first
+	{
+		if (current.getScore() == (*dLd)) {
+			targetNo = (*dLd) / 2;
+			tempCalc = (current.getScore() - current.doubleThrow(dartboard, bIter, targetNo));
+			current.setScore(tempCalc);
+			cout << "Double throw attempted on double leaving double to end" << endl;
+			
+			return targetNo;
+		}
+	}
+
+	for (bIter = dartboard.begin(); bIter != dartboard.end(); bIter++)
+	{
+									
+
+		if (current.getScore() == ((*bIter) * 2)) //if not then check if score is equal to ANY of the doubles, go for THAT shot to end the game
+		{
+			targetNo = *bIter;
+			tempCalc = (current.getScore() - current.doubleThrow(dartboard, bIter, targetNo));
+			current.setScore(tempCalc);
+			cout << "Normal double throw attempted to end" << endl;
+
+			return targetNo;
+		}
+	}
+
+	if (current.getScore() == 50) //if able to win with a bull, go for that shot
+	{
+		tempCalc = (current.getScore() - current.bull(dartboard));
+		current.setScore(tempCalc);
+		cout << "Bull attempted" << endl;
+	}
+	
+	if (current.getScore() > 50)
+	{
+		for (bIter = dartboard.begin(); bIter != dartboard.end(); bIter++) 
+		{
+			for (dLd = doublesLeaveDoubles.begin(); dLd != doublesLeaveDoubles.end(); dLd++) //checks if there's any double of treble possible that will leave
+			{	 //a double-leaving-double (most efficient even in case of fail) to end
+				if (current.getScore() == (((*bIter) * 3) + (*dLd)))
+				{
+					targetNo = *bIter;
+					tempCalc = (current.getScore() - current.trebleThrow(dartboard, bIter, targetNo));
+					current.setScore(tempCalc);
+					cout << "Triple throw attempted to leave double leaving double" << endl;
+
+					return targetNo;
+				}
+				else if (current.getScore() == (((*bIter) * 2) + (*dLd)))
+				{
+					targetNo = *bIter;
+					tempCalc = (current.getScore() - current.doubleThrow(dartboard, bIter, targetNo));
+					current.setScore(tempCalc);
+					cout << "Double throw attempted to leave double leaving double" << endl;
+
+					return targetNo;
+				}
+			}
+
+			if (current.getScore() == (((*bIter) * 3) + 50)) //checks then if there's any double or treble possible that will leave
+			{  //a bull to win the game, and goes for that (for question 2, 3 & 4 in adv AI)
+				targetNo = *bIter;
+				tempCalc = (current.getScore() - current.trebleThrow(dartboard, bIter, targetNo));
+				current.setScore(tempCalc);
+				cout << "Triple throw attempted to leave a bull" << endl;
+
+				return targetNo;
+			}
+			else if (current.getScore() == (((*bIter) * 2) + 50))
+			{
+				targetNo = *bIter;
+				tempCalc = (current.getScore() - current.doubleThrow(dartboard, bIter, targetNo));
+				current.setScore(tempCalc);
+				cout << "Double throw attempted to leave a bull" << endl;
+				return targetNo;
+			}
+		}
+	}
+	
+	if (current.getScore() >= 62) //in all the other cases, until down to this score, go only for the highest treble (3x20 - 60)
+	{
+		targetNo = 20; //additional step; because of reference, function argument needs to be a variable, not just literal "20"
+		tempCalc = (current.getScore() - current.trebleThrow(dartboard, bIter, targetNo));
+		current.setScore(tempCalc);
+		cout << "Normal triple throw attempted" << endl;
+	}
+	else if (current.getScore() < 62 && current.getScore() > 50) //goes for the single throw equal to the score difference, 
+	{	//thus it can try to end with a bull at next throw
+		targetNo = current.getScore() - 50;
+		tempCalc = (current.getScore() - current.singleThrow(dartboard, bIter, targetNo));
+		current.setScore(tempCalc);
+		cout << "Attempted throw difference (62 - 50) from bull" << endl;
+	}
+	else if (current.getScore() < 50)
+	{
+		for (dLd = doublesLeaveDoubles.begin(); dLd != doublesLeaveDoubles.end(); dLd++) //whenever under 50, whatever number of throws left, always better to get close
+		{	 //to a double that leaves a double (in case of failure), and go for that one
+			for (int j = 1; j <= 9; j++)
+			{
+				if (current.getScore() == ((*dLd) + j)) //calculates score difference from every double and aims for 
+				{ 	//that difference in order to have afterwards a score equal to a double
+					targetNo = j;
+					tempCalc = (current.getScore() - current.singleThrow(dartboard, bIter, targetNo));
+					current.setScore(tempCalc);
+					cout << "Attempted difference (1-9) to leave double leaving double" << endl;
+					dLd = doublesLeaveDoubles.end() - 1; //in order to end outer loop immediately
+					break;
+				}
+			}
+		}
+								
+		if (current.getScore() == 3) //when score is under 4, no more doubles leaving doubles, must only end with double 1
+		{
+			targetNo = 1;
+			tempCalc = (current.getScore() - current.singleThrow(dartboard, bIter, targetNo));
+			current.setScore(tempCalc);
+			cout << "Attempted throwing 1 because score under 4" << endl;
+		}
 	}
 
 	return 0;
