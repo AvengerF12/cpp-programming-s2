@@ -5,10 +5,12 @@
 #include <iomanip> //precision settings
 //#include <conio.h> //for kbhit()
 //#include <Windows.h>
+
 #include "player.h"
+
 using namespace std;
 
-int take_decision(Player& current, vector<int> doublesLeaveDoubles, vector<int> dartboard);
+int optimal_throw(Player& current, vector<int> doublesLeaveDoubles, vector<int> dartboard);
 
 int main()
 {
@@ -132,7 +134,7 @@ int main()
 							tempScore = modIter->getScore(); //saves current score in case any of the 3 shots is invalid
 							while (modIter->getScore() >= 2 && modIter->nTurns != 0)
 							{
-								targetNo = take_decision(*modIter, doublesLeaveDoubles, dartboard);	
+								targetNo = optimal_throw(*modIter, doublesLeaveDoubles, dartboard);	
 															
 								cout << modIter->getName() << "'s just scored " << targetNo << endl;
 								cout << modIter->getName() << "'s score is: " << modIter->getScore() << endl;
@@ -264,13 +266,7 @@ int main()
 }
 
 
-
-
-
-
-
-
-int take_decision(Player& current, vector<int> doublesLeaveDoubles, vector<int> dartboard)
+int optimal_throw(Player& current, vector<int> doublesLeaveDoubles, vector<int> dartboard)
 {
 	vector<int>::const_iterator dLd;
 	vector<int>::const_iterator bIter;
@@ -278,7 +274,6 @@ int take_decision(Player& current, vector<int> doublesLeaveDoubles, vector<int> 
 	int tempCalc = 0;
 	unsigned int targetNo = 0;
 
-	//start of AI action
 	for (dLd = doublesLeaveDoubles.begin(); dLd != doublesLeaveDoubles.end(); dLd++) //if score is equal to a double-leaving-double, goes for THAT first
 	{
 		if (current.getScore() == (*dLd)) {
