@@ -1,2 +1,5 @@
+CXX=g++
+CXXFLAGS=-Wall -std=c++11 -g 
+
 all:
-	g++ -Wall -std=c++11 -g -o darts main.cpp player.cpp helpers.cpp
+	$(CXX) $(CXXFLAGS) -o darts main.cpp player.cpp helpers.cpp
