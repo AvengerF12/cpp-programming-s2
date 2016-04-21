@@ -123,8 +123,8 @@ int main()
 		}
 		else if (choiceMode == 2)
 		{
-			cout << "Starting interactive game..." << endl;
-			start_interactive();
+			cout << "To be released soon... Meanwhile try our simulation mode..." << endl;
+			start_simulation(player, scoreCombinations, dartboard, doublesLeaveDoubles, modIter);
 			break;
 		}
 		else
