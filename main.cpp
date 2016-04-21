@@ -110,28 +110,34 @@ int main()
 		}
 	}
 
-	char simYN = '\0';
+	int choiceMode = 0;;
 	while (true)
 	{
-		cout << "Start simulation? (y/n) ";
-		cin >> simYN;
-		if (simYN == 'y' || simYN == 'Y')
+		cout << "Choose which mode you would like to proceed with: Simulation(1) or Interactive play(2)";
+		cin >> choiceMode;
+		if (choiceMode == 1)
 		{
+			cout << "Starting simulation..." << endl;
 			start_simulation(player, scoreCombinations, dartboard, doublesLeaveDoubles, modIter);
-			break; //stops the simulation while(true) loop, after all matches are concluded
+			break; // Stops the while(true) loop after the game is concluded
 		}
-		else if (simYN == 'n' || simYN == 'N')
+		else if (choiceMode == 2)
 		{
-			cout << "Ok then, not yet. Have some time to prepare for it." << endl;
+			cout << "Starting interactive game..." << endl;
+			start_interactive();
+			break;
 		}
 		else
 		{
-			cout << "Wrong key pressed." << endl;
+			cout << "Invalid value inserted. Please try again: ";
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			choiceMode = 0;
 		}
 	}
 
 	//results and percentages output
-	cout << "\nSimulation ended. Players' results:" << endl;
+	cout << "\nRun ended. Players' results:" << endl;
 
 	for(unsigned int i=0;i<player.size();i++){
 		cout << player[i].getName() << ": " << player[i].matchesWon << " matches won." << endl;
@@ -353,6 +359,7 @@ int start_simulation(vector<Player>& player, vector<int>& scoreCombinations, vec
 				modIter = player.begin(); //if the end of the vector was reached, start again
 			}
 		}
+
 		if (player[0].setsWon == 7)
 		{
 			player[0].matchesWon++;
