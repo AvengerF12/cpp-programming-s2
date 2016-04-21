@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <iomanip> //precision settings
+#include <limits>
 //#include <conio.h> //for kbhit()
 //#include <Windows.h>
 
@@ -71,6 +72,9 @@ int main()
 
 			default:
 				cout << "Wrong number inserted. Please try again: ";
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				accChoice = 0;
 				break;
 			}
 
