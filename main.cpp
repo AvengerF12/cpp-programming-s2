@@ -11,12 +11,13 @@
 using namespace std;
 
 int optimal_throw(Player& current, vector<int> doublesLeaveDoubles, vector<int> dartboard);
+int start_simulation(vector<Player>& player, vector<int>& scoreCombinations, vector<int>& dartboard, vector<int>& doublesLeaveDoubles, vector<Player>::iterator& modIter);
+
+const int TOTAL_MATCHES = 10, MAX_THROWS_TURN = 3;
 
 int main()
 {
-	const int TOTAL_MATCHES = 10, MAX_THROWS_TURN = 3;
-	unsigned int bAccuracy = 0, sAccuracy = 0, targetNo = 0;
-	int tempScore = 0;
+	unsigned int bAccuracy = 0, sAccuracy = 0;
 	string playerName = "";
 	vector<int> dartboard { 20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5 };
 	vector<int>::const_iterator bIter;
@@ -112,131 +113,7 @@ int main()
 		cin >> simYN;
 		if (simYN == 'y' || simYN == 'Y')
 		{
-
-			for (int i = 0; i < TOTAL_MATCHES; i++)
-			{
-				player[0].setsWon = 0;
-				player[1].setsWon = 0;
-				while (player[0].setsWon < 7 && player[1].setsWon < 7) // When any player reaches 7 sets won in one match (can't lose the match anymore), the loop breaks
-				{
-					player[0].gamesWon = 0;
-					player[1].gamesWon = 0;
-					while (player[0].gamesWon < 3 && player[1].gamesWon < 3) //when any player reaches 3 games won in a set of 5 (can't lose the set anymore), the loop breaks
-					{
-						//real game begins
-						for (; modIter <= player.end(); modIter++) //iterator position doesen't change, so same player who won the 50:50 will start, then keep alternating
-						{
-							if (modIter == player.end()) //if the end of the vector was reached, start again
-							{
-								modIter = player.begin(); 
-							}
-							
-							tempScore = modIter->getScore(); //saves current score in case any of the 3 shots is invalid
-							while (modIter->getScore() >= 2 && modIter->nTurns != 0)
-							{
-								targetNo = optimal_throw(*modIter, doublesLeaveDoubles, dartboard);	
-															
-								cout << modIter->getName() << "'s just scored " << targetNo << endl;
-								cout << modIter->getName() << "'s score is: " << modIter->getScore() << endl;
-								cout << modIter->getName() << "'s throws left: " << (modIter->nTurns) - 1 << endl;
-								cout << endl;
-
-								if (modIter->getScore() == 0) //if current player won, update games won, exits the game, next player will start
-								{
-									modIter->gamesWon++;
-									break;
-								}
-								modIter->nTurns--;
-							}
-							if (modIter->getScore() == 0)
-							{
-								int resetScore = 501; //scores get restored
-								player[0].setScore(resetScore);
-								player[1].setScore(resetScore);
-								break;
-							}
-							else if (modIter->getScore() < 2 && modIter->getScore() != 0)
-							{
-								modIter->setScore(tempScore); //resets the previously held score because score got under 2
-								modIter->nTurns = MAX_THROWS_TURN;
-							}
-							else
-							{
-								modIter->nTurns = MAX_THROWS_TURN;
-							}
-						}
-						modIter++;
-					}
-					if (player[0].gamesWon == 3)
-					{
-						player[0].setsWon++;
-					}
-					else
-					{
-						player[1].setsWon++;
-					}
-
-					if (modIter == player.end())
-					{
-						modIter = player.begin(); //if the end of the vector was reached, start again
-					}
-				}
-				if (player[0].setsWon == 7)
-				{
-					player[0].matchesWon++;
-				}
-				else
-				{
-					player[1].matchesWon++;
-				}
-
-
-				//counters for the sets winning percentage
-				{
-					if (player[0].setsWon == 7 && player[1].setsWon == 0){
-						scoreCombinations[0]++;
-					}
-					else if (player[0].setsWon == 7 && player[1].setsWon == 1){
-						scoreCombinations[1]++;
-					}
-					else if (player[0].setsWon == 7 && player[1].setsWon == 2){
-						scoreCombinations[2]++;
-					}
-					else if (player[0].setsWon == 7 && player[1].setsWon == 3){
-						scoreCombinations[3]++;
-					}
-					else if (player[0].setsWon == 7 && player[1].setsWon == 4){
-						scoreCombinations[4]++;
-					}
-					else if (player[0].setsWon == 7 && player[1].setsWon == 5){
-						scoreCombinations[5]++;
-					}
-					else if (player[0].setsWon == 7 && player[1].setsWon == 6){
-						scoreCombinations[6]++;
-					}
-					else if (player[0].setsWon == 6 && player[1].setsWon == 7){
-						scoreCombinations[7]++;
-					}
-					else if (player[0].setsWon == 5 && player[1].setsWon == 7){
-						scoreCombinations[8]++;
-					}
-					else if (player[0].setsWon == 4 && player[1].setsWon == 7){
-						scoreCombinations[9]++;
-					}
-					else if (player[0].setsWon == 3 && player[1].setsWon == 7){
-						scoreCombinations[10]++;
-					}
-					else if (player[0].setsWon == 2 && player[1].setsWon == 7){
-						scoreCombinations[11]++;
-					}
-					else if (player[0].setsWon == 1 && player[1].setsWon == 7){
-						scoreCombinations[12]++;
-					}
-					else if (player[0].setsWon == 0 && player[1].setsWon == 7){
-						scoreCombinations[13]++;
-					}
-				}
-			}
+			start_simulation(player, scoreCombinations, dartboard, doublesLeaveDoubles, modIter);
 			break; //stops the simulation while(true) loop, after all matches are concluded
 		}
 		else if (simYN == 'n' || simYN == 'N')
@@ -397,3 +274,136 @@ int optimal_throw(Player& current, vector<int> doublesLeaveDoubles, vector<int> 
 
 	return 0;
 }
+
+
+int start_simulation(vector<Player>& player, vector<int>& scoreCombinations, vector<int>& dartboard, vector<int>& doublesLeaveDoubles, vector<Player>::iterator& modIter) {
+
+	int tempScore = 0;
+	unsigned int targetNo = 0;
+
+	for (int i = 0; i < TOTAL_MATCHES; i++)
+	{
+		player[0].setsWon = 0;
+		player[1].setsWon = 0;
+		while (player[0].setsWon < 7 && player[1].setsWon < 7) // When any player reaches 7 sets won in one match (can't lose the match anymore), the loop breaks
+		{
+			player[0].gamesWon = 0;
+			player[1].gamesWon = 0;
+			while (player[0].gamesWon < 3 && player[1].gamesWon < 3) //when any player reaches 3 games won in a set of 5 (can't lose the set anymore), the loop breaks
+			{
+				//real game begins
+				for (; modIter <= player.end(); modIter++) //iterator position doesen't change, so same player who won the 50:50 will start, then keep alternating
+				{
+					if (modIter == player.end()) //if the end of the vector was reached, start again
+					{
+						modIter = player.begin(); 
+					}
+							
+					tempScore = modIter->getScore(); //saves current score in case any of the 3 shots is invalid
+					while (modIter->getScore() >= 2 && modIter->nTurns != 0)
+					{
+						targetNo = optimal_throw(*modIter, doublesLeaveDoubles, dartboard);	
+															
+						cout << modIter->getName() << "'s just scored " << targetNo << endl;
+						cout << modIter->getName() << "'s score is: " << modIter->getScore() << endl;
+						cout << modIter->getName() << "'s throws left: " << (modIter->nTurns) - 1 << endl;
+						cout << endl;
+
+						if (modIter->getScore() == 0) //if current player won, update games won, exits the game, next player will start
+						{
+							modIter->gamesWon++;
+							break;
+						}
+								modIter->nTurns--;
+					}
+					if (modIter->getScore() == 0)
+					{
+						int resetScore = 501; //scores get restored
+						player[0].setScore(resetScore);
+						player[1].setScore(resetScore);
+						break;
+					}
+					else if (modIter->getScore() < 2 && modIter->getScore() != 0)
+					{
+						modIter->setScore(tempScore); //resets the previously held score because score got under 2
+						modIter->nTurns = MAX_THROWS_TURN;
+					}
+					else
+					{
+						modIter->nTurns = MAX_THROWS_TURN;
+					}
+				}
+				modIter++;
+			}
+			if (player[0].gamesWon == 3)
+			{
+				player[0].setsWon++;
+			}
+			else
+			{
+				player[1].setsWon++;
+			}
+
+			if (modIter == player.end())
+			{
+				modIter = player.begin(); //if the end of the vector was reached, start again
+			}
+		}
+		if (player[0].setsWon == 7)
+		{
+			player[0].matchesWon++;
+		}
+		else
+		{
+			player[1].matchesWon++;
+		}
+
+
+		//counters for the sets winning percentage
+		if (player[0].setsWon == 7 && player[1].setsWon == 0){
+			scoreCombinations[0]++;
+		}
+		else if (player[0].setsWon == 7 && player[1].setsWon == 1){
+			scoreCombinations[1]++;
+		}
+		else if (player[0].setsWon == 7 && player[1].setsWon == 2){
+			scoreCombinations[2]++;
+		}
+		else if (player[0].setsWon == 7 && player[1].setsWon == 3){
+			scoreCombinations[3]++;
+		}
+		else if (player[0].setsWon == 7 && player[1].setsWon == 4){
+			scoreCombinations[4]++;
+		}
+		else if (player[0].setsWon == 7 && player[1].setsWon == 5){
+			scoreCombinations[5]++;
+				}
+		else if (player[0].setsWon == 7 && player[1].setsWon == 6){
+			scoreCombinations[6]++;
+		}
+		else if (player[0].setsWon == 6 && player[1].setsWon == 7){
+			scoreCombinations[7]++;
+		}
+		else if (player[0].setsWon == 5 && player[1].setsWon == 7){
+			scoreCombinations[8]++;
+		}
+		else if (player[0].setsWon == 4 && player[1].setsWon == 7){
+			scoreCombinations[9]++;
+		}
+		else if (player[0].setsWon == 3 && player[1].setsWon == 7){
+			scoreCombinations[10]++;
+		}
+		else if (player[0].setsWon == 2 && player[1].setsWon == 7){
+			scoreCombinations[11]++;
+		}
+		else if (player[0].setsWon == 1 && player[1].setsWon == 7){
+			scoreCombinations[12]++;
+		}
+		else if (player[0].setsWon == 0 && player[1].setsWon == 7){
+			scoreCombinations[13]++;
+		}
+	}
+
+	return 0;
+}
+
