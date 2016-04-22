@@ -10,7 +10,7 @@
 using namespace std;
 
 
-// getters
+// Getters section
 string& Player::getName()
 {
 	return playerName;
@@ -35,7 +35,7 @@ int& Player::getSingleAccuracy()
 }
 
 
-// setters
+// Setters section
 void Player::setName(string& name)
 {
 	playerName = name;
@@ -62,50 +62,57 @@ void Player::setSingleAccuracy(unsigned int single_accuracy)
 
 void Player::setAllAccuracy(unsigned int all_accuracy)
 {
-	if (all_accuracy <= 99 && all_accuracy > 89)
-	{
+	/*This function takes a single value for the
+ 	 * accuracy as an argument and from that calculates
+ 	 * a fair and balanced value for both the single and
+ 	 * bull accuracy.*/
+
+	if (all_accuracy <= 99 && all_accuracy > 89) {
 		bullAccuracy = all_accuracy - 10;
 		singleAccuracy = all_accuracy - 4;
-	}
-	else if (all_accuracy <= 89 && all_accuracy > 79)
-	{
+
+	} else if (all_accuracy <= 89 && all_accuracy > 79) {
 		bullAccuracy = all_accuracy - 7;
 		singleAccuracy = all_accuracy - 3;
-	}
-	else if (all_accuracy <= 79 && all_accuracy > 64)
-	{
+
+	} else if (all_accuracy <= 79 && all_accuracy > 64) {
 		bullAccuracy = all_accuracy - 5;
 		singleAccuracy = all_accuracy - 2;
-	}
-	else if (all_accuracy <= 64 && all_accuracy > 50)
-	{
+
+	} else if (all_accuracy <= 64 && all_accuracy > 50) {
 		bullAccuracy = all_accuracy - 3;
 		singleAccuracy = all_accuracy -1;
-	}
-	else
-	{
+
+	} else {
 		bullAccuracy = all_accuracy;
 		singleAccuracy = all_accuracy;
+
 	}
 }
 
 
-//throw functions
+// Throw functions
 int Player::bull(const vector<int>& theDartboard)
 {
 	int randomization = (rand() % 100);
-	int forTheOuter = getBullAccuracy() + 4; // Sets how much easier it is to hit the outer bull
+	
+	// Sets the range between which it is possible to hit the outer bull
+	int forTheOuter = getBullAccuracy() + 4; 
 
 	if (randomization <= getBullAccuracy()) {
 		return 50;
+
 	} else if (randomization > getBullAccuracy() && randomization <= (getBullAccuracy() + forTheOuter)) {
-		/* Split the remaining possibilities, depending on the accuracy, in two:																		
+
+		/* Split the remaining possibilities, depending on the accuracy, in two:
  		 * outer-bull (25) or a random target on the dartboard */
  		 
 		return 25;
+
 	} else {
 		int dartPosRand = (rand() % theDartboard.size());
 		return theDartboard[dartPosRand];
+
 	}
 }
 
@@ -119,17 +126,21 @@ int Player::singleThrow(const vector<int>& theDartboard, vector<int>::const_iter
 	if (target == 25){
 		if (randomization <= getSingleAccuracy() + 4){
 			return 25;
+
 		} else {
 			int half = (100 - getSingleAccuracy()) / 2; 
+
 			/* For the remaining hit cases:
- 			 * Take the number of values between 100 (max accuracy) and the single accuracy of the player,
- 			 * split it in half in order to have an equal probability of hitting bull or another target */
+ 			 * Take the number of values between 100 (max accuracy) and the single accuracy,
+ 			 * split it in half to have an equal probability of hitting bull or another target */
 			if (randomization > getSingleAccuracy() && randomization <= (getSingleAccuracy() + half)) { 
 				return 50;
+
 			} else { 
 				//and the other interval for the rest of board numbers
 				int dartPosRand = (rand() % theDartboard.size());
 				return theDartboard[dartPosRand];
+
 			}
 		}
 
@@ -164,27 +175,26 @@ int Player::singleThrow(const vector<int>& theDartboard, vector<int>::const_iter
 int Player::doubleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int target)
 {
 	int randomization = (rand() % 100);
-	int aThird = (100 - getSingleAccuracy()) / 3; //for remaining hit cases
 
-	if (randomization <= getSingleAccuracy())
-	{
-		return target * 2; //hits correct double
+	// Used to determine the remaining hit cases
+	int aThird = (100 - getSingleAccuracy()) / 3; 
+
+	if (randomization <= getSingleAccuracy()) {
+		return target * 2; // The requested target has been hit
+
+	} else if (randomization > getSingleAccuracy() && randomization <= (getSingleAccuracy() + aThird)) {
+		return target; // Hits single
+
 	}
-	else if (randomization > getSingleAccuracy() && randomization <= (getSingleAccuracy() + aThird)) //first alternative interval
-	{
-		return target; //hits single
-	}
-	else if (randomization > (getSingleAccuracy() + aThird) && randomization <= (getSingleAccuracy() + 2 * aThird)) //second alternative interval
-	{
+	else if (randomization > (getSingleAccuracy() + aThird) && randomization <= (getSingleAccuracy() + 2 * aThird)) {
 		bIter = move_pos(theDartboard, target, 'l');
 
-		return *bIter * 2; //hits the double at the left
-	}
-	else
-	{
+		return *bIter * 2; // Hits the double on the left
+
+	} else {
 		bIter = move_pos(theDartboard, target, 'r');
 		
-		return *bIter * 2; //hits double at the right
+		return *bIter * 2; // Hits double on the right
 	}
 }
 
@@ -192,31 +202,32 @@ int Player::doubleThrow(const vector<int>& theDartboard, vector<int>::const_iter
 int Player::trebleThrow(const vector<int>& theDartboard, vector<int>::const_iterator bIter, unsigned int target)
 {
 	int randomization = (rand() % 100);
-	int aFourth = (100 - getSingleAccuracy()) / 4; //for remaining hit cases
+	int aFourth = (100 - getSingleAccuracy()) / 4; // Determines the 4 remaining hit cases
 
-	if (randomization <= getSingleAccuracy()) //check later if maybe some other accuracy coefficient
-	{
-		return target * 3; //hits correct treble
-	} else if (randomization > getSingleAccuracy() && randomization <= (getSingleAccuracy() + 2 * aFourth)) //first alternative interval, bigger than usual
-	{ //because double occasion to hit single
-		return target; //hits single
+	if (randomization <= getSingleAccuracy()) {
+		return target * 3; // Hits correct treble target
+
+	} else if (randomization > getSingleAccuracy() && randomization <= (getSingleAccuracy() + 2 * aFourth)) { 
+		// This hit case is bigger because there are two possibilities to hit a single
+		return target; // Hits single
+
 	} else if (randomization > (getSingleAccuracy() + 2 * aFourth) \
-		&& randomization <= (getSingleAccuracy() + 3 * aFourth)) //second alternative interval
-	{
+		&& randomization <= (getSingleAccuracy() + 3 * aFourth)) {
 		bIter = move_pos(theDartboard, target, 'l');
 
 		return *bIter * 3; //hits the treble at the left
-	}
-	else
-	{
+
+	} else {
 		bIter = move_pos(theDartboard, target, 'r');
 
 		return *bIter * 3; //hits treble at the right
+
 	}
 }
 
 Player::Player()	
 {
+	// Player stats
 	playerScore = 501;
 	bullAccuracy = 0;
 	singleAccuracy = 0;
@@ -230,4 +241,3 @@ Player::~Player()
 {
 
 }
-

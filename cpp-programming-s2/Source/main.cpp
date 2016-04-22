@@ -26,14 +26,16 @@ int main()
 	vector<int> doublesLeaveDoubles { 40, 36, 32, 28, 24, 20, 16, 12, 8, 4 }; 
 	vector<int>::const_iterator dLd;
 
-	vector<int> scoreCombinations(14); //stores all the possible Joe:Sid set winning combinations: 7:6, 6:7, 5:7, 4:7, 3:7, 2:7, 1:7 and viceversa
+	vector<int> scoreCombinations(14); // Stores all the possible Joe:Sid winning combinations: 7:6, 6:7, 5:7...
+
+	// Correlated strings to scoreCombinations, used to simplify output
 	vector<string> stringCombinations {"7:0", "7:1", "7:2", "7:3", "7:4", "7:5", "7:6", \
-						"6:7", "5:7", "4:7", "3:7", "2:7", "1:7", "0:7"};
+						"6:7", "5:7", "4:7", "3:7", "2:7", "1:7", "0:7"}; 
 
 	vector<Player> player(2);
 	vector<Player>::iterator modIter;
 
-	for (unsigned int i = 0; i < player.size(); i++) //setting players' names
+	for (unsigned int i = 0; i < player.size(); i++) // Set players' names by input
 	{
 		cout << "Player " << (i + 1) << " name is: ";
 		cin >> playerName;
@@ -85,51 +87,40 @@ int main()
 		
 	}
 	
-	//decision of player that begins game
+	// Starting match to decide the player that throws first
 	cout << "\nThe players will now attempt a 50:50 game to decide who will start first: " << endl;
-	while (true)
-	{
+	while (true) {
 		modIter = player.begin();
 		int tempResult1 = modIter->bull(dartboard);
 		modIter++;
 		int tempResult2 = modIter->bull(dartboard);
 
-		if (tempResult1 == tempResult2)
-		{
+		if (tempResult1 == tempResult2) {
 			continue;
-		}
-		else if (tempResult1 > tempResult2)
-		{
+		} else if (tempResult1 > tempResult2) {
 			modIter = player.begin();
 			cout << modIter->getName() << " will start. " << endl;
 			break;
-		}
-		else
-		{
+
+		} else {
 			cout << modIter->getName() << " will start. " << endl;
 			break;
 		}
 	}
 
 	int choiceMode = 0;;
-	while (true)
-	{
+	while (true) {
 		cout << "Choose which mode you would like to proceed with: Simulation(1) or Interactive play(2)";
 		cin >> choiceMode;
-		if (choiceMode == 1)
-		{
+		if (choiceMode == 1) {
 			cout << "Starting simulation..." << endl;
 			start_simulation(player, scoreCombinations, dartboard, doublesLeaveDoubles, modIter);
 			break; // Stops the while(true) loop after the game is concluded
-		}
-		else if (choiceMode == 2)
-		{
+		} else if (choiceMode == 2) {
 			cout << "To be released soon... Meanwhile try our simulation mode..." << endl;
 			start_simulation(player, scoreCombinations, dartboard, doublesLeaveDoubles, modIter);
 			break;
-		}
-		else
-		{
+		} else {
 			cout << "Invalid value inserted. Please try again: ";
 			cin.clear();
 			cin.ignore(1000, '\n');
@@ -137,7 +128,7 @@ int main()
 		}
 	}
 
-	//results and percentages output
+	// Output of the results and percentages
 	cout << "\nRun ended. Players' results:" << endl;
 
 	for(unsigned int i=0;i<player.size();i++){
@@ -164,8 +155,8 @@ int optimal_throw(Player& current, vector<int> doublesLeaveDoubles, vector<int> 
 	int tempCalc = 0;
 	unsigned int targetNo = 0;
 
-	for (dLd = doublesLeaveDoubles.begin(); dLd != doublesLeaveDoubles.end(); dLd++) //if score is equal to a double-leaving-double, goes for THAT first
-	{
+	// If score is equal to a double-leaving-double, goes for THAT first
+	for (dLd = doublesLeaveDoubles.begin(); dLd != doublesLeaveDoubles.end(); dLd++) {
 		if (current.getScore() == (*dLd)) {
 			targetNo = (*dLd) / 2;
 			tempCalc = (current.getScore() - current.doubleThrow(dartboard, bIter, targetNo));
@@ -176,12 +167,10 @@ int optimal_throw(Player& current, vector<int> doublesLeaveDoubles, vector<int> 
 		}
 	}
 
-	for (bIter = dartboard.begin(); bIter != dartboard.end(); bIter++)
-	{
+	for (bIter = dartboard.begin(); bIter != dartboard.end(); bIter++) {
 									
-
-		if (current.getScore() == ((*bIter) * 2)) //if not then check if score is equal to ANY of the doubles, go for THAT shot to end the game
-		{
+		if (current.getScore() == ((*bIter) * 2)) {
+			// If not then check if score is equal to any double, and try the shot
 			targetNo = *bIter;
 			tempCalc = (current.getScore() - current.doubleThrow(dartboard, bIter, targetNo));
 			current.setScore(tempCalc);
@@ -191,30 +180,27 @@ int optimal_throw(Player& current, vector<int> doublesLeaveDoubles, vector<int> 
 		}
 	}
 
-	if (current.getScore() == 50) //if able to win with a bull, go for that shot
-	{
+	if (current.getScore() == 50) {
+		// If able to win with a bull, go for that shot
 		tempCalc = (current.getScore() - current.bull(dartboard));
 		current.setScore(tempCalc);
 		cout << "Bull attempted" << endl;
 	}
 	
-	if (current.getScore() > 50)
-	{
-		for (bIter = dartboard.begin(); bIter != dartboard.end(); bIter++) 
-		{
-			for (dLd = doublesLeaveDoubles.begin(); dLd != doublesLeaveDoubles.end(); dLd++) //checks if there's any double of treble possible that will leave
-			{	 //a double-leaving-double (most efficient even in case of fail) to end
-				if (current.getScore() == (((*bIter) * 3) + (*dLd)))
-				{
+	if (current.getScore() > 50) {
+		for (bIter = dartboard.begin(); bIter != dartboard.end(); bIter++) {
+
+			// Checks if there's any double or treble possible that will leave
+			// a double-leaving-double (most efficient even in case of fail) to end the game
+			for (dLd = doublesLeaveDoubles.begin(); dLd != doublesLeaveDoubles.end(); dLd++) {	 
+				if (current.getScore() == (((*bIter) * 3) + (*dLd))) {
 					targetNo = *bIter;
 					tempCalc = (current.getScore() - current.trebleThrow(dartboard, bIter, targetNo));
 					current.setScore(tempCalc);
 					cout << "Triple throw attempted to leave double leaving double" << endl;
 
 					return targetNo;
-				}
-				else if (current.getScore() == (((*bIter) * 2) + (*dLd)))
-				{
+				} else if (current.getScore() == (((*bIter) * 2) + (*dLd))) {
 					targetNo = *bIter;
 					tempCalc = (current.getScore() - current.doubleThrow(dartboard, bIter, targetNo));
 					current.setScore(tempCalc);
@@ -224,17 +210,16 @@ int optimal_throw(Player& current, vector<int> doublesLeaveDoubles, vector<int> 
 				}
 			}
 
-			if (current.getScore() == (((*bIter) * 3) + 50)) //checks then if there's any double or treble possible that will leave
-			{  //a bull to win the game, and goes for that (for question 2, 3 & 4 in adv AI)
+			// Checks if there's any double or treble possible that will leave
+			// a bull to win the game, and goes for that (for question 2, 3 & 4 in adv AI)
+			if (current.getScore() == (((*bIter) * 3) + 50)) {
 				targetNo = *bIter;
 				tempCalc = (current.getScore() - current.trebleThrow(dartboard, bIter, targetNo));
 				current.setScore(tempCalc);
 				cout << "Triple throw attempted to leave a bull" << endl;
 
 				return targetNo;
-			}
-			else if (current.getScore() == (((*bIter) * 2) + 50))
-			{
+			} else if (current.getScore() == (((*bIter) * 2) + 50)) {
 				targetNo = *bIter;
 				tempCalc = (current.getScore() - current.doubleThrow(dartboard, bIter, targetNo));
 				current.setScore(tempCalc);
@@ -244,44 +229,52 @@ int optimal_throw(Player& current, vector<int> doublesLeaveDoubles, vector<int> 
 		}
 	}
 	
-	if (current.getScore() >= 62) //in all the other cases, until down to this score, go only for the highest treble (3x20 - 60)
-	{
-		targetNo = 20; //additional step; because of reference, function argument needs to be a variable, not just literal "20"
+	// In all the other cases, until down to this score, go only for the highest treble (3x20 - 60)
+	if (current.getScore() >= 62) {
+		targetNo = 20; 
 		tempCalc = (current.getScore() - current.trebleThrow(dartboard, bIter, targetNo));
 		current.setScore(tempCalc);
 		cout << "Normal triple throw attempted" << endl;
-	}
-	else if (current.getScore() < 62 && current.getScore() > 50) //goes for the single throw equal to the score difference, 
-	{	//thus it can try to end with a bull at next throw
+
+	} else if (current.getScore() < 62 && current.getScore() > 50)	{
+		// Goes for the single throw equal to the score difference, 
+		// so that it can try to end with a bull at next throw
+		
 		targetNo = current.getScore() - 50;
 		tempCalc = (current.getScore() - current.singleThrow(dartboard, bIter, targetNo));
 		current.setScore(tempCalc);
 		cout << "Attempted throw difference (62 - 50) from bull" << endl;
-	}
-	else if (current.getScore() < 50)
-	{
-		for (dLd = doublesLeaveDoubles.begin(); dLd != doublesLeaveDoubles.end(); dLd++) //whenever under 50, whatever number of throws left, always better to get close
-		{	 //to a double that leaves a double (in case of failure), and go for that one
-			for (int j = 1; j <= 9; j++)
-			{
-				if (current.getScore() == ((*dLd) + j)) //calculates score difference from every double and aims for 
-				{ 	//that difference in order to have afterwards a score equal to a double
+
+	} else if (current.getScore() < 50) {
+		// Whenever under 50, whatever number of throws left, always better to get close
+	       	// to a double that leaves a double (in case of failure), and go for that one
+	       
+		for (dLd = doublesLeaveDoubles.begin(); dLd != doublesLeaveDoubles.end(); dLd++) {
+	       		
+			for (int j = 1; j <= 9; j++) {
+
+				if (current.getScore() == ((*dLd) + j))	{
+					// Calculates score difference from every double and aims for 
+ 					// that difference in order to have afterwards a score equal to a double
+ 					
 					targetNo = j;
 					tempCalc = (current.getScore() - current.singleThrow(dartboard, bIter, targetNo));
 					current.setScore(tempCalc);
 					cout << "Attempted difference (1-9) to leave double leaving double" << endl;
 					dLd = doublesLeaveDoubles.end() - 1; //in order to end outer loop immediately
 					break;
+
 				}
 			}
 		}
 								
-		if (current.getScore() == 3) //when score is under 4, no more doubles leaving doubles, must only end with double 1
-		{
+		//when score is under 4, no more doubles leaving doubles, must only end with double 1
+		if (current.getScore() == 3) {
 			targetNo = 1;
 			tempCalc = (current.getScore() - current.singleThrow(dartboard, bIter, targetNo));
 			current.setScore(tempCalc);
 			cout << "Attempted throwing 1 because score under 4" << endl;
+
 		}
 	}
 
@@ -294,27 +287,29 @@ int start_simulation(vector<Player>& player, vector<int>& scoreCombinations, vec
 	int tempScore = 0;
 	unsigned int targetNo = 0;
 
-	for (int i = 0; i < TOTAL_MATCHES; i++)
-	{
+	for (int i = 0; i < TOTAL_MATCHES; i++) {
 		player[0].setsWon = 0;
 		player[1].setsWon = 0;
-		while (player[0].setsWon < 7 && player[1].setsWon < 7) // When any player reaches 7 sets won in one match (can't lose the match anymore), the loop breaks
-		{
+		
+		// When any player reaches 7 sets won in one match, the loop breaks
+		while (player[0].setsWon < 7 && player[1].setsWon < 7) {
 			player[0].gamesWon = 0;
 			player[1].gamesWon = 0;
-			while (player[0].gamesWon < 3 && player[1].gamesWon < 3) //when any player reaches 3 games won in a set of 5 (can't lose the set anymore), the loop breaks
-			{
-				//real game begins
-				for (; modIter <= player.end(); modIter++) //iterator position doesen't change, so same player who won the 50:50 will start, then keep alternating
-				{
-					if (modIter == player.end()) //if the end of the vector was reached, start again
-					{
+			
+			// When a player reaches 3 games won in a set of 5, the loop breaks
+			while (player[0].gamesWon < 3 && player[1].gamesWon < 3) {
+				// Start of the game
+				
+				// The player who won the 50:50 will start				{
+				for (; modIter <= player.end(); modIter++) {
+				
+					// If the end of the vector is reached, start over
+					if (modIter == player.end()) {
 						modIter = player.begin(); 
 					}
 							
-					tempScore = modIter->getScore(); //saves current score in case any of the 3 shots is invalid
-					while (modIter->getScore() >= 2 && modIter->nTurns != 0)
-					{
+					tempScore = modIter->getScore(); // Keep the current score in case any of the 3 shots is invalid
+					while (modIter->getScore() >= 2 && modIter->nTurns != 0) {
 						targetNo = optimal_throw(*modIter, doublesLeaveDoubles, dartboard);	
 															
 						cout << modIter->getName() << "'s just scored " << targetNo << endl;
@@ -322,58 +317,47 @@ int start_simulation(vector<Player>& player, vector<int>& scoreCombinations, vec
 						cout << modIter->getName() << "'s throws left: " << (modIter->nTurns) - 1 << endl;
 						cout << endl;
 
-						if (modIter->getScore() == 0) //if current player won, update games won, exits the game, next player will start
-						{
+						if (modIter->getScore() == 0) {
 							modIter->gamesWon++;
 							break;
 						}
-								modIter->nTurns--;
+						modIter->nTurns--;
 					}
-					if (modIter->getScore() == 0)
-					{
-						int resetScore = 501; //scores get restored
+
+					if (modIter->getScore() == 0) {
+						int resetScore = 501; // The score gets restored since the game is over
 						player[0].setScore(resetScore);
 						player[1].setScore(resetScore);
 						break;
-					}
-					else if (modIter->getScore() < 2 && modIter->getScore() != 0)
-					{
-						modIter->setScore(tempScore); //resets the previously held score because score got under 2
+					} else if (modIter->getScore() < 2 && modIter->getScore() != 0) {
+						modIter->setScore(tempScore); // Resets the previously held score because score got under 2
 						modIter->nTurns = MAX_THROWS_TURN;
-					}
-					else
-					{
+					} else {
 						modIter->nTurns = MAX_THROWS_TURN;
 					}
 				}
 				modIter++;
 			}
-			if (player[0].gamesWon == 3)
-			{
+
+			if (player[0].gamesWon == 3) {
 				player[0].setsWon++;
-			}
-			else
-			{
+			} else {
 				player[1].setsWon++;
 			}
 
-			if (modIter == player.end())
-			{
-				modIter = player.begin(); //if the end of the vector was reached, start again
+			if (modIter == player.end()) {
+				modIter = player.begin(); // If the end of the vector is reached, start again
 			}
 		}
 
-		if (player[0].setsWon == 7)
-		{
+		if (player[0].setsWon == 7) {
 			player[0].matchesWon++;
-		}
-		else
-		{
+		} else {
 			player[1].matchesWon++;
 		}
 
 
-		//counters for the sets winning percentage
+		// Keep count of how each game ended, needed to calculate percentages
 		if (player[0].setsWon == 7 && player[1].setsWon == 0){
 			scoreCombinations[0]++;
 		}
